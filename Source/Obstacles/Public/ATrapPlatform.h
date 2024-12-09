@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "ADamagePlatform.h"
 #include "AMovingPlatform.h"
 #include "Components/BoxComponent.h"
 #include "ATrapPlatform.generated.h"
@@ -11,14 +12,11 @@
  * 
  */
 UCLASS()
-class OBSTACLES_API AATrapPlatform : public AAMovingPlatform
+class OBSTACLES_API AATrapPlatform : public AADamagePlatform
 {
 	GENERATED_BODY()
 
 protected:
-	UPROPERTY(EditAnywhere)
-	float Damage;
-
 	UPROPERTY(EditAnywhere)
 	bool IsTrapActive;
 

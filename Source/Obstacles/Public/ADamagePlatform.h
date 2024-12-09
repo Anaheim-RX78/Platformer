@@ -3,15 +3,18 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "ADamagePlatform.h"
 #include "AMovingPlatform.h"
-#include "AVoidPlatform.generated.h"
+#include "ADamagePlatform.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class OBSTACLES_API AAVoidPlatform : public AADamagePlatform
+class OBSTACLES_API AADamagePlatform : public AAMovingPlatform
 {
 	GENERATED_BODY()
+
+protected:
+	UPROPERTY(EditAnywhere)
+	float Damage;
 };
