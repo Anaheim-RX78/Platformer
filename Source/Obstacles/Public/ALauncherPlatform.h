@@ -4,20 +4,17 @@
 
 #include "CoreMinimal.h"
 #include "APlatform.h"
-#include "AMovingPlatform.generated.h"
+#include "ALauncherPlatform.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class OBSTACLES_API AAMovingPlatform : public AAPlatform
+class OBSTACLES_API AALauncherPlatform : public AAPlatform
 {
 	GENERATED_BODY()
 
 protected:
 	UPROPERTY(EditAnywhere)
-	FVector TotalMovement;
-
-	UPROPERTY(EditAnywhere)
-	float Speed;
+	FVector TargetVector;
 };

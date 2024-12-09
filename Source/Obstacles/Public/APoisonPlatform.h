@@ -3,21 +3,24 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "APlatform.h"
-#include "AMovingPlatform.generated.h"
+#include "AMovingPlatform.h"
+#include "APoisonPlatform.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class OBSTACLES_API AAMovingPlatform : public AAPlatform
+class OBSTACLES_API AAPoisonPlatform : public AAMovingPlatform
 {
 	GENERATED_BODY()
 
 protected:
 	UPROPERTY(EditAnywhere)
-	FVector TotalMovement;
+	bool IsRecurrent;
 
 	UPROPERTY(EditAnywhere)
-	float Speed;
+	int DurationInSeconds;
+
+	UPROPERTY(EditAnywhere)
+	float DamagePerSecond;
 };
