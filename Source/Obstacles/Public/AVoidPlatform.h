@@ -11,7 +11,7 @@
  * 
  */
 UCLASS()
-class OBSTACLES_API AAVoidPlatform : public AADamagePlatform
+class OBSTACLES_API AAVoidPlatform : public AAMovingPlatform
 {
 	GENERATED_BODY()
 };
