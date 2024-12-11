@@ -3,6 +3,7 @@
 #include "APlatform.h"
 
 #include "Components/BoxComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 AAPlatform::AAPlatform()
@@ -33,24 +34,69 @@ void AAPlatform::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor
 	UE_LOG(LogTemp, Warning, TEXT("Common platform detected! Please override this method!"));
 }
 
-void AAPlatform::GetDamage(APlatformerCharacter* Character, int Damage)
+void AAPlatform::TakeDamage(APlatformerCharacter* Character, const DamageTypes DamageType) const
 {
+	if (!IsEnabled)
+	{
+		return;
+	}
+
+	int Damage = GetDamage(Character, DamageType);
+
 	if (Character->Health == 0)
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Player is already died!"));
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("You are already died!"));
 	}
 	else if (Damage >= Character->Health)
 	{
 		Character->Health = 0;
 		// Game Over
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Player has died!"));
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("You are died!"));
 	}
 	else if (Damage < Character->Health)
 	{
 		Character->Health -= Damage;
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow,
-		                                 FString::Printf(TEXT("Player got %d damage!"), Damage));
+		if (DamageSoundEffect)
+		{
+			UGameplayStatics::PlaySound2D(this, DamageSoundEffect, 1.0f, 1.0f, 0.81f);
+		}
+
+		if (Character->Health < 0)
+		{
+			Character->Health = 0;
+			// Game Over
+			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("You are died!"));
+			return;
+		}
+
+		FString Message = FString::Printf(TEXT("You got %d damage! Remaining HP: %d / 100"), Damage, Character->Health);
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, Message);
 	}
+}
+
+int AAPlatform::GetDamage(const APlatformerCharacter* Character, const DamageTypes DamageType)
+{
+	if (DamageType == DamageTypes::Normal)
+	{
+		return FMath::RandRange(1, 10);
+	}
+
+	if (DamageType == DamageTypes::Trap)
+	{
+		return FMath::RandRange(11, 20);
+	}
+
+	if (DamageType == DamageTypes::Void)
+	{
+		return Character->Health;
+	}
+
+	if (DamageType == DamageTypes::Poison)
+	{
+		// TODO: Set poisoned status
+	}
+
+	return 0;
 }
 
 // Called every frame

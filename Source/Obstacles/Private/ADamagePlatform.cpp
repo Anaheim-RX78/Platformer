@@ -11,11 +11,6 @@ void AADamagePlatform::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, 
 	APlatformerCharacter* Character = static_cast<APlatformerCharacter*>(OtherActor);
 	if (IsValid(Character))
 	{
-		this->GetDamage(Character, GetRandomDamage());
+		this->TakeDamage(Character, DamageTypes::Normal);
 	}
-}
-
-int AADamagePlatform::GetRandomDamage()
-{
-	return FMath::RandRange(1, 10);
 }
