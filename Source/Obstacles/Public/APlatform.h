@@ -3,15 +3,17 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Components/BoxComponent.h"
 #include "GameFramework/Actor.h"
+#include "Platformer/PlatformerCharacter.h"
 #include "APlatform.generated.h"
 
 UCLASS()
 class OBSTACLES_API AAPlatform : public AActor
 {
 	GENERATED_BODY()
-	
-public:	
+
+public:
 	// Sets default values for this actor's properties
 	AAPlatform();
 
@@ -25,8 +27,17 @@ protected:
 	UPROPERTY(EditAnywhere)
 	UStaticMeshComponent* Mesh;
 
-public:	
+	UPROPERTY(VisibleAnywhere)
+	UBoxComponent* CollisionBox;
+
+	UFUNCTION()
+	virtual void OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	                            UPrimitiveComponent* OtherComp,
+	                            int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	static void GetDamage(APlatformerCharacter* Character, int Damage);
+
+public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-
 };

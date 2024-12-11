@@ -14,7 +14,9 @@ class OBSTACLES_API AADamagePlatform : public AAMovingPlatform
 {
 	GENERATED_BODY()
 
-protected:
-	UPROPERTY(EditAnywhere)
-	float Damage;
+	virtual void OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	                            UPrimitiveComponent* OtherComp,
+	                            int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult) override;
+
+	static int GetRandomDamage();
 };

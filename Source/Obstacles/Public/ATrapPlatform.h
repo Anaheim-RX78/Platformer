@@ -12,7 +12,7 @@
  * 
  */
 UCLASS()
-class OBSTACLES_API AATrapPlatform : public AADamagePlatform
+class OBSTACLES_API AATrapPlatform : public AAMovingPlatform
 {
 	GENERATED_BODY()
 

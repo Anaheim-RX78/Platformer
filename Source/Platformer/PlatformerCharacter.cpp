@@ -69,6 +69,25 @@ void APlatformerCharacter::BeginPlay()
 	}
 }
 
+void APlatformerCharacter::GetDamage(int Damage)
+{
+	if (Health == 0)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Player is already died!"));
+	}
+	else if (Damage >= Health)
+	{
+		Health = 0;
+		// Game Over
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Player has died!"));
+	}
+	else if (Damage < Health)
+	{
+		Health -= Damage;
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, TEXT("Player got %d damage!"));
+	}
+}
+
 //////////////////////////////////////////////////////////////////////////
 // Input
 
