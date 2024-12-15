@@ -69,7 +69,8 @@ void AAPlatform::TakeDamage(APlatformerCharacter* Character, const DamageTypes D
 			return;
 		}
 
-		FString Message = FString::Printf(TEXT("You got %d damage! Remaining HP: %d / 100"), Damage, Character->Health);
+		const FString Message = FString::Printf(
+			TEXT("You got %d damage! Remaining HP: %d / 100"), Damage, Character->Health);
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, Message);
 	}
 }
