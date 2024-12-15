@@ -18,6 +18,7 @@ AAPlatform::AAPlatform()
 	CollisionBox = CreateDefaultSubobject<UBoxComponent>(TEXT("CollisionBox"));
 	CollisionBox->SetupAttachment(Mesh);
 	CollisionBox->SetGenerateOverlapEvents(true);
+	CollisionBox->SetRelativeScale3D(FVector(0.8f, 0.8f, 2.f));
 	CollisionBox->OnComponentBeginOverlap.AddDynamic(this, &AAPlatform::OnBeginOverlap);
 }
 
@@ -41,7 +42,7 @@ void AAPlatform::TakeDamage(APlatformerCharacter* Character, const DamageTypes D
 		return;
 	}
 
-	int Damage = GetDamage(Character, DamageType);
+	const int Damage = GetDamage(Character, DamageType);
 
 	if (Character->Health == 0)
 	{
@@ -69,7 +70,8 @@ void AAPlatform::TakeDamage(APlatformerCharacter* Character, const DamageTypes D
 			return;
 		}
 
-		FString Message = FString::Printf(TEXT("You got %d damage! Remaining HP: %d / 100"), Damage, Character->Health);
+		const FString Message = FString::Printf(
+			TEXT("You got %d damage! Remaining HP: %d / 100"), Damage, Character->Health);
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, Message);
 	}
 }
