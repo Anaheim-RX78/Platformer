@@ -14,4 +14,7 @@ UCLASS()
 class OBSTACLES_API AAVoidPlatform : public AAMovingPlatform
 {
 	GENERATED_BODY()
+	virtual void OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	                            UPrimitiveComponent* OtherComp,
+	                            int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult) override;
 };

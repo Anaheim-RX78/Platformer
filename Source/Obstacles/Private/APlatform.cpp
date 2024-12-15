@@ -32,7 +32,15 @@ void AAPlatform::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor
                                 UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
                                 const FHitResult& SweepResult)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Common platform detected! Please override this method!"));
+	UE_LOG(LogTemp, Warning, TEXT("Invalid collision method! Use the correct class!"));
+}
+
+void AAPlatform::PlaySound(const float StartTime) const
+{
+	if (DamageSoundEffect)
+	{
+		UGameplayStatics::PlaySound2D(this, DamageSoundEffect, 1.0f, 1.0f, StartTime);
+	}
 }
 
 void AAPlatform::TakeDamage(APlatformerCharacter* Character, const DamageTypes DamageType) const
@@ -57,10 +65,6 @@ void AAPlatform::TakeDamage(APlatformerCharacter* Character, const DamageTypes D
 	else if (Damage < Character->Health)
 	{
 		Character->Health -= Damage;
-		if (DamageSoundEffect)
-		{
-			UGameplayStatics::PlaySound2D(this, DamageSoundEffect, 1.0f, 1.0f, 0.81f);
-		}
 
 		if (Character->Health < 0)
 		{
