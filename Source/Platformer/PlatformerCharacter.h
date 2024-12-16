@@ -50,7 +50,7 @@ public:
 	UPROPERTY(EditAnywhere)
 	int Health = 100;
 
-	void GetDamage(int Damage);
+	void GetDamage(const int Damage);
 
 protected:
 	/** Called for movement input */

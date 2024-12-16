@@ -3,7 +3,7 @@
 
 #include "AVoidPlatform.h"
 
-AAVoidPlatform::AAVoidPlatform()
+AAVoidPlatform::AAVoidPlatform(): AAMovingPlatform()
 {
 	Mesh->SetCollisionResponseToChannel(ECC_Visibility, ECR_Overlap);
 	Mesh->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
@@ -21,7 +21,7 @@ void AAVoidPlatform::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AA
 	APlatformerCharacter* Character = static_cast<APlatformerCharacter*>(OtherActor);
 	if (IsValid(Character))
 	{
-		PlaySound(0.f);
-		this->TakeDamage(Character, DamageTypes::Void);
+		this->PlaySound(0.f);
+		this->MakeDamage(Character, DamageTypes::Void);
 	}
 }

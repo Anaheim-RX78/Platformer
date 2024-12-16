@@ -13,11 +13,4 @@ UCLASS()
 class OBSTACLES_API AABumperPlatform : public AAMovingPlatform
 {
 	GENERATED_BODY()
-
-protected:
-	UPROPERTY(VisibleAnywhere)
-	FVector InitialPosition;
-
-	UPROPERTY(EditAnywhere)
-	FVector BumperTargetPosition;
 };

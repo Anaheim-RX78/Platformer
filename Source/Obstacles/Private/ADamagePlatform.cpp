@@ -17,7 +17,7 @@ void AADamagePlatform::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, 
 	APlatformerCharacter* Character = static_cast<APlatformerCharacter*>(OtherActor);
 	if (IsValid(Character))
 	{
-		PlaySound(0.81f);
-		this->TakeDamage(Character, DamageTypes::Normal);
+		this->PlaySound(0.81f);
+		this->MakeDamage(Character, DamageTypes::Normal);
 	}
 }

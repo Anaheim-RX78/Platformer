@@ -43,7 +43,7 @@ void AAPlatform::PlaySound(const float StartTime) const
 	}
 }
 
-void AAPlatform::TakeDamage(APlatformerCharacter* Character, const DamageTypes DamageType) const
+void AAPlatform::MakeDamage(APlatformerCharacter* Character, const DamageTypes DamageType) const
 {
 	if (!IsEnabled)
 	{

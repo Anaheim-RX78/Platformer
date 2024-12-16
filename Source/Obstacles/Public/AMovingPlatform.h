@@ -15,9 +15,24 @@ class OBSTACLES_API AAMovingPlatform : public AAPlatform
 	GENERATED_BODY()
 
 protected:
+	virtual void BeginPlay() override;
+
+public:
+	virtual void Tick(float DeltaTime) override;
+
+protected:
 	UPROPERTY(EditAnywhere)
-	FVector TotalMovement;
+	float Speed = 1;
+
+	UPROPERTY(VisibleAnywhere)
+	FVector InitialPosition;
 
 	UPROPERTY(EditAnywhere)
-	float Speed;
+	FVector DeltaMovement;
+
+	UPROPERTY(VisibleAnywhere)
+	FVector TargetPosition;
+
+	UPROPERTY(VisibleAnywhere)
+	float Time = 0;
 };
