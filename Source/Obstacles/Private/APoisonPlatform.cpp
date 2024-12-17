@@ -18,5 +18,6 @@ void AAPoisonPlatform::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, 
 	if (IsValid(Character))
 	{
 		this->PlaySound(0.f);
+		Character->IsPoisoned = true;
 	}
 }
