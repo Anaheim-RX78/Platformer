@@ -14,8 +14,4 @@ UCLASS()
 class OBSTACLES_API AALauncherPlatform : public AAMovingPlatform
 {
 	GENERATED_BODY()
-
-protected:
-	UPROPERTY(EditAnywhere)
-	FVector TargetVector;
 };

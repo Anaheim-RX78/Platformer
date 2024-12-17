@@ -15,6 +15,10 @@ class OBSTACLES_API AAPoisonPlatform : public AAMovingPlatform
 	GENERATED_BODY()
 
 protected:
+	virtual void OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	                            UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
+	                            const FHitResult& SweepResult) override;
+
 	UPROPERTY(EditAnywhere)
 	bool IsRecurrent;
 
