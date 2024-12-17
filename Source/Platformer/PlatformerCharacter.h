@@ -58,6 +58,9 @@ public:
 
 	float TimeElapsed = 0.f;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool IsWin = false;
+
 	void GetDamage(const int Damage);
 
 protected:
