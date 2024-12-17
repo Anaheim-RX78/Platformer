@@ -58,7 +58,6 @@ void AAPlatform::MakeDamage(APlatformerCharacter* Character, const DamageTypes D
 	}
 	if (Damage >= Character->Health)
 	{
-		// TODO: Game over
 		Character->Health = 0;
 	}
 	else if (Damage < Character->Health)
@@ -67,7 +66,6 @@ void AAPlatform::MakeDamage(APlatformerCharacter* Character, const DamageTypes D
 
 		if (Character->Health < 0)
 		{
-			// TODO: Game over
 			Character->Health = 0;
 		}
 	}
