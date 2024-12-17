@@ -71,6 +71,30 @@ void APlatformerCharacter::BeginPlay()
 	}
 }
 
+void APlatformerCharacter::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+
+	if (this->PoisonDurationInSeconds == 0)
+	{
+		return;
+	}
+
+	// Update the elapsed time
+	TimeElapsed += DeltaSeconds;
+
+	// Check if the interval has passed
+	if (TimeElapsed >= this->PoisonDurationInSeconds)
+	{
+		this->Health -= FMath::RandRange(1, 5);
+		this->PoisonDurationInSeconds--;
+		if (this->PoisonDurationInSeconds == 0)
+		{
+			this->IsPoisoned = false;
+		}
+	}
+}
+
 void APlatformerCharacter::GetDamage(const int Damage)
 {
 	if (Health == 0)

@@ -20,9 +20,6 @@ protected:
 	                            const FHitResult& SweepResult) override;
 
 	UPROPERTY(EditAnywhere)
-	bool IsRecurrent;
-
-	UPROPERTY(EditAnywhere)
 	int DurationInSeconds;
 
 	UPROPERTY(EditAnywhere)

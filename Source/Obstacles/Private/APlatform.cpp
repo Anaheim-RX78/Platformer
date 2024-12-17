@@ -54,13 +54,12 @@ void AAPlatform::MakeDamage(APlatformerCharacter* Character, const DamageTypes D
 
 	if (Character->Health == 0)
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("You are already died!"));
+		return;
 	}
-	else if (Damage >= Character->Health)
+	if (Damage >= Character->Health)
 	{
+		// TODO: Game over
 		Character->Health = 0;
-		// Game Over
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("You are died!"));
 	}
 	else if (Damage < Character->Health)
 	{
@@ -68,19 +67,13 @@ void AAPlatform::MakeDamage(APlatformerCharacter* Character, const DamageTypes D
 
 		if (Character->Health < 0)
 		{
+			// TODO: Game over
 			Character->Health = 0;
-			// Game Over
-			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("You are died!"));
-			return;
 		}
-
-		const FString Message = FString::Printf(
-			TEXT("You got %d damage! Remaining HP: %d / 100"), Damage, Character->Health);
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, Message);
 	}
 }
 
-int AAPlatform::GetDamage(const APlatformerCharacter* Character, const DamageTypes DamageType)
+int AAPlatform::GetDamage(APlatformerCharacter* Character, const DamageTypes DamageType)
 {
 	if (DamageType == DamageTypes::Normal)
 	{
@@ -99,7 +92,10 @@ int AAPlatform::GetDamage(const APlatformerCharacter* Character, const DamageTyp
 
 	if (DamageType == DamageTypes::Poison)
 	{
-		// TODO: Set poisoned status
+		Character->IsPoisoned = true;
+		Character->PoisonDurationInSeconds = FMath::RandRange(2, 5);
+
+		return FMath::RandRange(1, 5);
 	}
 
 	return 0;

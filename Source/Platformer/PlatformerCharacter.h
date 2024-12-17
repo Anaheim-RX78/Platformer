@@ -53,6 +53,11 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	bool IsPoisoned = false;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	int PoisonDurationInSeconds = 0;
+
+	float TimeElapsed = 0.f;
+
 	void GetDamage(const int Damage);
 
 protected:
@@ -74,4 +79,5 @@ public:
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
+	virtual void Tick(float DeltaSeconds) override;
 };

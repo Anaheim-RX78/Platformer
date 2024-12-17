@@ -51,7 +51,7 @@ protected:
 	void MakeDamage(APlatformerCharacter* Character, DamageTypes DamageType) const;
 
 private:
-	static int GetDamage(const APlatformerCharacter* Character, DamageTypes DamageType);
+	static int GetDamage(APlatformerCharacter* Character, DamageTypes DamageType);
 
 public:
 	// Called every frame
