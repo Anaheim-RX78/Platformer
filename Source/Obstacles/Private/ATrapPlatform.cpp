@@ -9,6 +9,7 @@ AATrapPlatform::AATrapPlatform()
 	this->Trap->SetupAttachment(Mesh);
 	this->Trap->SetCollisionResponseToChannel(ECC_Visibility, ECR_Overlap);
 	this->Trap->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
+	this->Trap->SetVisibility(false);
 }
 
 void AATrapPlatform::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
