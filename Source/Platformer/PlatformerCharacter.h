@@ -47,8 +47,11 @@ class APlatformerCharacter : public ACharacter
 public:
 	APlatformerCharacter();
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	int Health = 100;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	bool IsPoisoned = false;
 
 	void GetDamage(const int Damage);
 

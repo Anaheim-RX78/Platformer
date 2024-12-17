@@ -3,6 +3,12 @@
 
 #include "ABumperPlatform.h"
 
+AABumperPlatform::AABumperPlatform()
+{
+	this->Balloon = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Balloon"));
+	this->Balloon->SetupAttachment(Mesh);
+}
+
 void AABumperPlatform::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
                                       UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
                                       const FHitResult& SweepResult)
