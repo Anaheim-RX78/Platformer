@@ -61,7 +61,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool IsWin = false;
 
-	void GetDamage(const int Damage);
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	int Coins = 0;
+
+	void GetDamage(int Damage);
 
 protected:
 	/** Called for movement input */
