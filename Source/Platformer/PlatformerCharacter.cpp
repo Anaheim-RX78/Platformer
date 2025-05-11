@@ -10,6 +10,7 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
+#include "Kismet/GameplayStatics.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -57,7 +58,7 @@ APlatformerCharacter::APlatformerCharacter()
 
 void APlatformerCharacter::BeginPlay()
 {
-	// Call the base class  
+	// Call the base class
 	Super::BeginPlay();
 
 	//Add Input Mapping Context
@@ -68,12 +69,25 @@ void APlatformerCharacter::BeginPlay()
 		{
 			Subsystem->AddMappingContext(DefaultMappingContext, 0);
 		}
+
+		this->MyLocalPlayerSubsystem = PlayerController->GetLocalPlayer()->GetSubsystem<UMyLocalPlayerSubsystem>();
 	}
+
+	this->MyGameInstanceSubsystem = UGameplayStatics::GetGameInstance(GetWorld())->GetSubsystem<
+		UMyGameInstanceSubsystem>();
 }
 
-void APlatformerCharacter::Tick(float DeltaSeconds)
+void APlatformerCharacter::Tick(const float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
+
+	this->MyGameInstanceSubsystem->IncreaseTimeElapsed(DeltaSeconds);
+
+	const FVector CurrentLocation = GetActorLocation();
+
+	this->MyLocalPlayerSubsystem->IncreaseDistanceMoved(FVector::Dist(PreviousLocation, CurrentLocation));
+
+	this->PreviousLocation = CurrentLocation;
 
 	if (this->PoisonDurationInSeconds == 0)
 	{
@@ -81,12 +95,12 @@ void APlatformerCharacter::Tick(float DeltaSeconds)
 	}
 
 	// Update the elapsed time
-	TimeElapsed += DeltaSeconds;
+	this->MyGameInstanceSubsystem->IncreaseTimeElapsed(DeltaSeconds);
 
 	// Check if the interval has passed
-	if (TimeElapsed >= this->PoisonDurationInSeconds)
+	if (this->MyGameInstanceSubsystem->GetTimeElapsed() >= this->PoisonDurationInSeconds)
 	{
-		this->Health -= FMath::RandRange(1, 5);
+		this->MyLocalPlayerSubsystem->ReduceHealth(FMath::RandRange(1, 5));
 		this->PoisonDurationInSeconds--;
 		if (this->PoisonDurationInSeconds == 0)
 		{
@@ -95,21 +109,21 @@ void APlatformerCharacter::Tick(float DeltaSeconds)
 	}
 }
 
-void APlatformerCharacter::GetDamage(const int Damage)
+void APlatformerCharacter::GetDamage(const int Damage) const
 {
-	if (Health == 0)
+	if (this->MyLocalPlayerSubsystem->GetHealth() == 0)
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Player is already died!"));
 	}
-	else if (Damage >= Health)
+	else if (Damage >= this->MyLocalPlayerSubsystem->GetHealth())
 	{
-		Health = 0;
+		this->MyLocalPlayerSubsystem->ResetHealth();
 		// Game Over
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Player has died!"));
 	}
-	else if (Damage < Health)
+	else if (Damage < this->MyLocalPlayerSubsystem->GetHealth())
 	{
-		Health -= Damage;
+		this->MyLocalPlayerSubsystem->ReduceHealth(Damage);
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, TEXT("Player got %d damage!"));
 	}
 }
@@ -141,10 +155,19 @@ void APlatformerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInpu
 	}
 }
 
+void APlatformerCharacter::JumpAndIncreaseCounter(const FInputActionValue& Value)
+{
+	this->Jump();
+	if (!this->GetCharacterMovement()->IsFalling())
+	{
+		this->MyLocalPlayerSubsystem->IncreaseJumpCount();
+	}
+}
+
 void APlatformerCharacter::Move(const FInputActionValue& Value)
 {
 	// input is a Vector2D
-	FVector2D MovementVector = Value.Get<FVector2D>();
+	const FVector2D MovementVector = Value.Get<FVector2D>();
 
 	if (Controller != nullptr)
 	{
@@ -155,10 +178,10 @@ void APlatformerCharacter::Move(const FInputActionValue& Value)
 		// get forward vector
 		const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
 
-		// get right vector 
+		// get right vector
 		const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
 
-		// add movement 
+		// add movement
 		AddMovementInput(ForwardDirection, MovementVector.Y);
 		AddMovementInput(RightDirection, MovementVector.X);
 	}

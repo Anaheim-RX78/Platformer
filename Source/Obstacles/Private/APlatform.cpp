@@ -52,21 +52,21 @@ void AAPlatform::MakeDamage(APlatformerCharacter* Character, const DamageTypes D
 
 	const int Damage = GetDamage(Character, DamageType);
 
-	if (Character->Health == 0)
+	if (Character->MyLocalPlayerSubsystem->GetHealth() == 0)
 	{
 		return;
 	}
-	if (Damage >= Character->Health)
+	if (Damage >= Character->MyLocalPlayerSubsystem->GetHealth())
 	{
-		Character->Health = 0;
+		Character->MyLocalPlayerSubsystem->ResetHealth();
 	}
-	else if (Damage < Character->Health)
+	else if (Damage < Character->MyLocalPlayerSubsystem->GetHealth())
 	{
-		Character->Health -= Damage;
+		Character->MyLocalPlayerSubsystem->ReduceHealth(Damage);
 
-		if (Character->Health < 0)
+		if (Character->MyLocalPlayerSubsystem->GetHealth() < 0)
 		{
-			Character->Health = 0;
+			Character->MyLocalPlayerSubsystem->ResetHealth();
 		}
 	}
 }
@@ -85,7 +85,7 @@ int AAPlatform::GetDamage(APlatformerCharacter* Character, const DamageTypes Dam
 
 	if (DamageType == DamageTypes::Void)
 	{
-		return Character->Health;
+		return Character->MyLocalPlayerSubsystem->GetHealth();
 	}
 
 	if (DamageType == DamageTypes::Poison)

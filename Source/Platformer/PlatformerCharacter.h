@@ -3,6 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "MyGameInstanceSubsystem.h"
+#include "MyLocalPlayerSubsystem.h"
 #include "GameFramework/Character.h"
 #include "Logging/LogMacros.h"
 #include "PlatformerCharacter.generated.h"
@@ -44,11 +46,13 @@ class APlatformerCharacter : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* LookAction;
 
+	UPROPERTY()
+	UMyGameInstanceSubsystem* MyGameInstanceSubsystem;
+
+	FVector PreviousLocation;
+
 public:
 	APlatformerCharacter();
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	int Health = 100;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	bool IsPoisoned = false;
@@ -56,15 +60,16 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	int PoisonDurationInSeconds = 0;
 
-	float TimeElapsed = 0.f;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool IsWin = false;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	int Coins = 0;
 
-	void GetDamage(int Damage);
+	UPROPERTY(BlueprintReadOnly)
+	UMyLocalPlayerSubsystem* MyLocalPlayerSubsystem;
+
+	void GetDamage(int Damage) const;
 
 protected:
 	/** Called for movement input */
@@ -76,6 +81,8 @@ protected:
 
 	// APawn interface
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	void JumpAndIncreaseCounter(const FInputActionValue& Value);
 
 	// To add mapping context
 	virtual void BeginPlay() override;
