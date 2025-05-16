@@ -3,20 +3,18 @@
 
 #include "AMovingPlatform.h"
 
-void AAMovingPlatform::BeginPlay()
-{
+void AAMovingPlatform::BeginPlay() {
 	Super::BeginPlay();
 
-	InitialPosition = GetActorLocation();
-	TargetPosition = GetActorLocation() + DeltaMovement;
+	this->InitialPosition = this->GetActorLocation();
+	this->TargetPosition = this->GetActorLocation() + this->DeltaMovement;
 }
 
-void AAMovingPlatform::Tick(const float DeltaTime)
-{
+void AAMovingPlatform::Tick(const float DeltaTime) {
 	Super::Tick(DeltaTime);
 
-	Time += DeltaTime * Speed;
-	const float t = 0.5f - 0.5f * FMath::Cos(Time);
+	this->Time += DeltaTime * this->Speed;
+	const float t = 0.5f - 0.5f * FMath::Cos(this->Time);
 
-	SetActorLocation(FMath::Lerp(InitialPosition, TargetPosition, t));
+	this->SetActorLocation(FMath::Lerp(this->InitialPosition, this->TargetPosition, t));
 }
