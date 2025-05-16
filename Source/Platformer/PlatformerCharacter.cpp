@@ -14,59 +14,38 @@
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
-//////////////////////////////////////////////////////////////////////////
-// APlatformerCharacter
+APlatformerCharacter::APlatformerCharacter() {
+	this->GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
 
-APlatformerCharacter::APlatformerCharacter()
-{
-	// Set size for collision capsule
-	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
+	this->bUseControllerRotationPitch = false;
+	this->bUseControllerRotationYaw = false;
+	this->bUseControllerRotationRoll = false;
 
-	// Don't rotate when the controller rotates. Let that just affect the camera.
-	bUseControllerRotationPitch = false;
-	bUseControllerRotationYaw = false;
-	bUseControllerRotationRoll = false;
+	this->GetCharacterMovement()->bOrientRotationToMovement = true;
+	this->GetCharacterMovement()->RotationRate = FRotator(0.0f, 500.0f, 0.0f);
+	this->GetCharacterMovement()->JumpZVelocity = 700.f;
+	this->GetCharacterMovement()->AirControl = 0.35f;
+	this->GetCharacterMovement()->MaxWalkSpeed = 500.f;
+	this->GetCharacterMovement()->MinAnalogWalkSpeed = 20.f;
+	this->GetCharacterMovement()->BrakingDecelerationWalking = 2000.f;
+	this->GetCharacterMovement()->BrakingDecelerationFalling = 1500.0f;
 
-	// Configure character movement
-	GetCharacterMovement()->bOrientRotationToMovement = true; // Character moves in the direction of input...	
-	GetCharacterMovement()->RotationRate = FRotator(0.0f, 500.0f, 0.0f); // ...at this rotation rate
+	this->CameraBoom = this->CreateDefaultSubobject<USpringArmComponent>("CameraBoom");
+	this->CameraBoom->SetupAttachment(RootComponent);
+	this->CameraBoom->TargetArmLength = 400.0f;
+	this->CameraBoom->bUsePawnControlRotation = true;
 
-	// Note: For faster iteration times these variables, and many more, can be tweaked in the Character Blueprint
-	// instead of recompiling to adjust them
-	GetCharacterMovement()->JumpZVelocity = 700.f;
-	GetCharacterMovement()->AirControl = 0.35f;
-	GetCharacterMovement()->MaxWalkSpeed = 500.f;
-	GetCharacterMovement()->MinAnalogWalkSpeed = 20.f;
-	GetCharacterMovement()->BrakingDecelerationWalking = 2000.f;
-	GetCharacterMovement()->BrakingDecelerationFalling = 1500.0f;
-
-	// Create a camera boom (pulls in towards the player if there is a collision)
-	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
-	CameraBoom->SetupAttachment(RootComponent);
-	CameraBoom->TargetArmLength = 400.0f; // The camera follows at this distance behind the character	
-	CameraBoom->bUsePawnControlRotation = true; // Rotate the arm based on the controller
-
-	// Create a follow camera
-	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
-	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
-	// Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
-	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
-
-	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
-	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
+	this->FollowCamera = CreateDefaultSubobject<UCameraComponent>("FollowCamera");
+	this->FollowCamera->SetupAttachment(this->CameraBoom, USpringArmComponent::SocketName);
+	this->FollowCamera->bUsePawnControlRotation = false;
 }
 
-void APlatformerCharacter::BeginPlay()
-{
-	// Call the base class
+void APlatformerCharacter::BeginPlay() {
 	Super::BeginPlay();
 
-	//Add Input Mapping Context
-	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
-	{
+	if (APlayerController* PlayerController = Cast<APlayerController>(this->Controller)) {
 		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<
-			UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
-		{
+			UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer())) {
 			Subsystem->AddMappingContext(DefaultMappingContext, 0);
 		}
 
@@ -77,8 +56,7 @@ void APlatformerCharacter::BeginPlay()
 		UMyGameInstanceSubsystem>();
 }
 
-void APlatformerCharacter::Tick(const float DeltaSeconds)
-{
+void APlatformerCharacter::Tick(const float DeltaSeconds) {
 	Super::Tick(DeltaSeconds);
 
 	this->MyGameInstanceSubsystem->IncreaseTimeElapsed(DeltaSeconds);
@@ -89,41 +67,30 @@ void APlatformerCharacter::Tick(const float DeltaSeconds)
 
 	this->PreviousLocation = CurrentLocation;
 
-	if (this->PoisonDurationInSeconds == 0)
-	{
+	if (this->PoisonDurationInSeconds == 0) {
 		return;
 	}
 
-	// Update the elapsed time
 	this->MyGameInstanceSubsystem->IncreaseTimeElapsed(DeltaSeconds);
 
-	// Check if the interval has passed
-	if (this->MyGameInstanceSubsystem->GetTimeElapsed() >= this->PoisonDurationInSeconds)
-	{
+	if (this->MyGameInstanceSubsystem->GetTimeElapsed() >= this->PoisonDurationInSeconds) {
 		this->MyLocalPlayerSubsystem->ReduceHealth(FMath::RandRange(1, 5));
 		this->PoisonDurationInSeconds--;
-		if (this->PoisonDurationInSeconds == 0)
-		{
+		if (this->PoisonDurationInSeconds == 0) {
 			this->IsPoisoned = false;
 		}
 	}
 }
 
-void APlatformerCharacter::GetDamage(const int Damage) const
-{
-	if (this->MyLocalPlayerSubsystem->GetHealth() == 0)
-	{
+void APlatformerCharacter::GetDamage(const int Damage) {
+	if (this->MyLocalPlayerSubsystem->GetHealth() == 0) {
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Player is already died!"));
-	}
-	else if (Damage >= this->MyLocalPlayerSubsystem->GetHealth())
-	{
+	} else if (Damage >= this->MyLocalPlayerSubsystem->GetHealth()) {
 		this->MyLocalPlayerSubsystem->ResetHealth();
 		// Game Over
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Player has died!"));
-	}
-	else if (Damage < this->MyLocalPlayerSubsystem->GetHealth())
-	{
-		this->MyLocalPlayerSubsystem->ReduceHealth(Damage);
+	} else if (Damage < this->MyLocalPlayerSubsystem->GetHealth()) {
+		this->ReduceHealth(Damage);
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, TEXT("Player got %d damage!"));
 	}
 }
@@ -131,11 +98,9 @@ void APlatformerCharacter::GetDamage(const int Damage) const
 //////////////////////////////////////////////////////////////////////////
 // Input
 
-void APlatformerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
+void APlatformerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) {
 	// Set up action bindings
-	if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent))
-	{
+	if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent)) {
 		// Jumping
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &ACharacter::Jump);
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
@@ -145,9 +110,7 @@ void APlatformerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInpu
 
 		// Looking
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &APlatformerCharacter::Look);
-	}
-	else
-	{
+	} else {
 		UE_LOG(LogTemplateCharacter, Error,
 		       TEXT(
 			       "'%s' Failed to find an Enhanced Input component! This template is built to use the Enhanced Input system. If you intend to use the legacy system, then you will need to update this C++ file."
@@ -155,47 +118,58 @@ void APlatformerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInpu
 	}
 }
 
-void APlatformerCharacter::JumpAndIncreaseCounter(const FInputActionValue& Value)
-{
+void APlatformerCharacter::JumpAndIncreaseCounter(const FInputActionValue& Value) {
 	this->Jump();
-	if (!this->GetCharacterMovement()->IsFalling())
-	{
-		this->MyLocalPlayerSubsystem->IncreaseJumpCount();
+	if (!this->GetCharacterMovement()->IsFalling()) {
+		this->IncreaseJumpCount();
 	}
 }
 
-void APlatformerCharacter::Move(const FInputActionValue& Value)
-{
-	// input is a Vector2D
+void APlatformerCharacter::Move(const FInputActionValue& Value) {
 	const FVector2D MovementVector = Value.Get<FVector2D>();
 
-	if (Controller != nullptr)
-	{
-		// find out which way is forward
+	if (this->Controller != nullptr) {
 		const FRotator Rotation = Controller->GetControlRotation();
 		const FRotator YawRotation(0, Rotation.Yaw, 0);
 
-		// get forward vector
 		const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
 
-		// get right vector
 		const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
 
-		// add movement
-		AddMovementInput(ForwardDirection, MovementVector.Y);
-		AddMovementInput(RightDirection, MovementVector.X);
+		this->AddMovementInput(ForwardDirection, MovementVector.Y);
+		this->AddMovementInput(RightDirection, MovementVector.X);
 	}
 }
 
-void APlatformerCharacter::Look(const FInputActionValue& Value)
-{
-	// input is a Vector2D
-	FVector2D LookAxisVector = Value.Get<FVector2D>();
+void APlatformerCharacter::Look(const FInputActionValue& Value) {
+	const FVector2D LookAxisVector = Value.Get<FVector2D>();
 
-	if (Controller != nullptr)
-	{
-		// add yaw and pitch input to controller
+	if (Controller != nullptr) {
 		AddControllerYawInput(LookAxisVector.X);
 		AddControllerPitchInput(LookAxisVector.Y);
 	}
+}
+
+void APlatformerCharacter::IncreaseDistanceMoved(const float DeltaDistance) {
+	this->TotalDistanceMoved += DeltaDistance;
+	GEngine->AddOnScreenDebugMessage(2, 5.0f, FColor::Red,
+	                                 FString::Printf(TEXT("Distance moved: %.2f"), TotalDistanceMoved));
+}
+
+void APlatformerCharacter::ReduceHealth(int DeltaHealth) {
+	this->Health -= DeltaHealth;
+	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, FString::Printf(TEXT("Health reduced by %d"), DeltaHealth));
+}
+
+void APlatformerCharacter::ResetHealth() {
+	this->Health = 0;
+	this->DeathCount++;
+	this->MyGameInstanceSubsystem->IncreaseDeathCount();
+	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("Health reset to 0"));
+}
+
+void APlatformerCharacter::IncreaseJumpCount() {
+	this->JumpCount++;
+	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red,
+	                                 FString::Printf(TEXT("Jump count increased to %d"), JumpCount));
 }

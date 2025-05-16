@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "MyGameInstanceSubsystem.h"
-#include "MyLocalPlayerSubsystem.h"
 #include "GameFramework/Character.h"
 #include "Logging/LogMacros.h"
 #include "PlatformerCharacter.generated.h"
@@ -18,8 +17,7 @@ struct FInputActionValue;
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
 
 UCLASS(config=Game)
-class APlatformerCharacter : public ACharacter
-{
+class APlatformerCharacter : public ACharacter {
 	GENERATED_BODY()
 
 	/** Camera boom positioning the camera behind the character */
@@ -51,6 +49,14 @@ class APlatformerCharacter : public ACharacter
 
 	FVector PreviousLocation;
 
+	float TotalDistanceMoved = 0.0f;
+
+	int Health = 100;
+
+	int JumpCount = 0;
+
+	int DeathCount = 0;
+
 public:
 	APlatformerCharacter();
 
@@ -67,9 +73,22 @@ public:
 	int Coins = 0;
 
 	UPROPERTY(BlueprintReadOnly)
-	UMyLocalPlayerSubsystem* MyLocalPlayerSubsystem;
+	class UMyLocalPlayerSubsystem* MyLocalPlayerSubsystem;
 
-	void GetDamage(int Damage) const;
+	void GetDamage(int Damage);
+
+	void IncreaseDistanceMoved(float DeltaDistance);
+
+	void ReduceHealth(int DeltaHealth);
+
+	UFUNCTION(BlueprintCallable)
+	int GetHealth() const {
+		return this->Health;
+	}
+
+	void ResetHealth();
+
+	void IncreaseJumpCount();
 
 protected:
 	/** Called for movement input */
@@ -89,8 +108,14 @@ protected:
 
 public:
 	/** Returns CameraBoom subobject **/
-	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
+	FORCEINLINE class USpringArmComponent* GetCameraBoom() const {
+		return CameraBoom;
+	}
+
 	/** Returns FollowCamera subobject **/
-	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
+	FORCEINLINE class UCameraComponent* GetFollowCamera() const {
+		return FollowCamera;
+	}
+
 	virtual void Tick(float DeltaSeconds) override;
 };
