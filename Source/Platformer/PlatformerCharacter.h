@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "MyGameInstanceSubsystem.h"
+#include "MyLocalPlayerSubsystem.h"
 #include "GameFramework/Character.h"
 #include "Logging/LogMacros.h"
 #include "PlatformerCharacter.generated.h"
@@ -73,7 +74,7 @@ public:
 	int Coins = 0;
 
 	UPROPERTY(BlueprintReadOnly)
-	class UMyLocalPlayerSubsystem* MyLocalPlayerSubsystem;
+	UMyLocalPlayerSubsystem* MyLocalPlayerSubsystem;
 
 	void GetDamage(int Damage);
 
