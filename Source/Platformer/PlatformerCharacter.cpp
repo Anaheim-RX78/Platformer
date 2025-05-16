@@ -39,6 +39,7 @@ APlatformerCharacter::APlatformerCharacter() {
 	this->FollowCamera = CreateDefaultSubobject<UCameraComponent>("FollowCamera");
 	this->FollowCamera->SetupAttachment(this->CameraBoom, USpringArmComponent::SocketName);
 	this->FollowCamera->bUsePawnControlRotation = false;
+	this->Stats = this->CreateDefaultSubobject<UStatsComponent>("Stats");
 }
 
 void APlatformerCharacter::BeginPlay() {
@@ -49,8 +50,6 @@ void APlatformerCharacter::BeginPlay() {
 			UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer())) {
 			Subsystem->AddMappingContext(DefaultMappingContext, 0);
 		}
-
-		this->MyLocalPlayerSubsystem = PlayerController->GetLocalPlayer()->GetSubsystem<UMyLocalPlayerSubsystem>();
 	}
 
 	this->MyGameInstanceSubsystem = UGameplayStatics::GetGameInstance(GetWorld())->GetSubsystem<
@@ -64,7 +63,7 @@ void APlatformerCharacter::Tick(const float DeltaSeconds) {
 
 	const FVector CurrentLocation = GetActorLocation();
 
-	this->MyLocalPlayerSubsystem->IncreaseDistanceMoved(FVector::Dist(PreviousLocation, CurrentLocation));
+	this->Stats->IncreaseDistanceMoved(FVector::Dist(PreviousLocation, CurrentLocation));
 
 	this->PreviousLocation = CurrentLocation;
 
@@ -75,7 +74,7 @@ void APlatformerCharacter::Tick(const float DeltaSeconds) {
 	this->MyGameInstanceSubsystem->IncreaseTimeElapsed(DeltaSeconds);
 
 	if (this->MyGameInstanceSubsystem->GetTimeElapsed() >= this->PoisonDurationInSeconds) {
-		this->MyLocalPlayerSubsystem->ReduceHealth(FMath::RandRange(1, 5));
+		this->Stats->ReduceHealth(FMath::RandRange(1, 5));
 		this->PoisonDurationInSeconds--;
 		if (this->PoisonDurationInSeconds == 0) {
 			this->IsPoisoned = false;
@@ -84,13 +83,13 @@ void APlatformerCharacter::Tick(const float DeltaSeconds) {
 }
 
 void APlatformerCharacter::GetDamage(const int Damage) {
-	if (this->MyLocalPlayerSubsystem->GetHealth() == 0) {
+	if (this->Stats->GetHealth() == 0) {
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Player is already died!"));
-	} else if (Damage >= this->MyLocalPlayerSubsystem->GetHealth()) {
-		this->MyLocalPlayerSubsystem->ResetHealth();
+	} else if (Damage >= this->Stats->GetHealth()) {
+		this->Stats->ResetHealth();
 		// Game Over
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Player has died!"));
-	} else if (Damage < this->MyLocalPlayerSubsystem->GetHealth()) {
+	} else if (Damage < this->Stats->GetHealth()) {
 		this->ReduceHealth(Damage);
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, TEXT("Player got %d damage!"));
 	}

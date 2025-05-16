@@ -25,7 +25,10 @@ void AAPlatform::BeginPlay() {
 void AAPlatform::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
                                 UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
                                 const FHitResult& SweepResult) {
-	UE_LOG(LogTemp, Warning, TEXT("Invalid collision method! Use the correct class!"));
+	APlatformerCharacter* Character = static_cast<APlatformerCharacter*>(OtherActor);
+	if (IsValid(Character)) {
+		UE_LOG(LogTemp, Warning, TEXT("Invalid collision method! Use the correct class!"));
+	}
 }
 
 void AAPlatform::PlaySound(const float StartTime) const {
@@ -41,16 +44,16 @@ void AAPlatform::MakeDamage(APlatformerCharacter* Character, const EDamageTypes 
 
 	const int Damage = this->GetDamage(Character, DamageType);
 
-	if (Character->MyLocalPlayerSubsystem->GetHealth() == 0) {
+	if (Character->Stats->GetHealth() == 0) {
 		return;
 	}
-	if (Damage >= Character->MyLocalPlayerSubsystem->GetHealth()) {
-		Character->MyLocalPlayerSubsystem->ResetHealth();
-	} else if (Damage < Character->MyLocalPlayerSubsystem->GetHealth()) {
-		Character->MyLocalPlayerSubsystem->ReduceHealth(Damage);
+	if (Damage >= Character->Stats->GetHealth()) {
+		Character->Stats->ResetHealth();
+	} else if (Damage < Character->Stats->GetHealth()) {
+		Character->Stats->ReduceHealth(Damage);
 
-		if (Character->MyLocalPlayerSubsystem->GetHealth() < 0) {
-			Character->MyLocalPlayerSubsystem->ResetHealth();
+		if (Character->Stats->GetHealth() < 0) {
+			Character->Stats->ResetHealth();
 		}
 	}
 }
@@ -65,7 +68,7 @@ int AAPlatform::GetDamage(APlatformerCharacter* Character, const EDamageTypes Da
 	}
 
 	if (DamageType == EDamageTypes::Void) {
-		return Character->MyLocalPlayerSubsystem->GetHealth();
+		return Character->Stats->GetHealth();
 	}
 
 	if (DamageType == EDamageTypes::Poison) {
