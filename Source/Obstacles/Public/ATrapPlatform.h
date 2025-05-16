@@ -8,12 +8,8 @@
 #include "Components/BoxComponent.h"
 #include "ATrapPlatform.generated.h"
 
-/**
- * 
- */
 UCLASS()
-class OBSTACLES_API AATrapPlatform : public AAMovingPlatform
-{
+class OBSTACLES_API AATrapPlatform : public AAMovingPlatform {
 	GENERATED_BODY()
 
 	AATrapPlatform();

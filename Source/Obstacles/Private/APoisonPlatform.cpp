@@ -5,19 +5,16 @@
 
 void AAPoisonPlatform::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
                                       UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
-                                      const FHitResult& SweepResult)
-{
+                                      const FHitResult& SweepResult) {
 	Super::OnBeginOverlap(OverlappedComponent, OtherActor, OtherComp, OtherBodyIndex, bFromSweep, SweepResult);
 
-	if (!IsEnabled)
-	{
+	if (!IsEnabled) {
 		return;
 	}
 
 	APlatformerCharacter* Character = static_cast<APlatformerCharacter*>(OtherActor);
-	if (IsValid(Character))
-	{
+	if (IsValid(Character)) {
 		this->PlaySound(0.f);
-		this->MakeDamage(Character, DamageTypes::Poison);
+		this->MakeDamage(Character, EDamageTypes::Poison);
 	}
 }

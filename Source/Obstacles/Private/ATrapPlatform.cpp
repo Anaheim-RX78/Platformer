@@ -3,8 +3,7 @@
 
 #include "ATrapPlatform.h"
 
-AATrapPlatform::AATrapPlatform()
-{
+AATrapPlatform::AATrapPlatform() {
 	this->Trap = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Trap"));
 	this->Trap->SetupAttachment(Mesh);
 	this->Trap->SetCollisionResponseToChannel(ECC_Visibility, ECR_Overlap);
@@ -14,24 +13,20 @@ AATrapPlatform::AATrapPlatform()
 
 void AATrapPlatform::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
                                     UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
-                                    const FHitResult& SweepResult)
-{
+                                    const FHitResult& SweepResult) {
 	Super::OnBeginOverlap(OverlappedComponent, OtherActor, OtherComp, OtherBodyIndex, bFromSweep, SweepResult);
 
 
-	if (!IsEnabled)
-	{
+	if (!IsEnabled) {
 		return;
 	}
 
 	APlatformerCharacter* Character = static_cast<APlatformerCharacter*>(OtherActor);
-	if (IsValid(Character))
-	{
-		if (FMath::RandBool())
-		{
+	if (IsValid(Character)) {
+		if (FMath::RandBool()) {
 			this->Trap->SetVisibility(true);
 			this->PlaySound(0.f);
-			this->MakeDamage(Character, DamageTypes::Trap);
+			this->MakeDamage(Character, EDamageTypes::Trap);
 		}
 	}
 }

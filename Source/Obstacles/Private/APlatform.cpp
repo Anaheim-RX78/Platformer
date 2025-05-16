@@ -38,7 +38,7 @@ void AAPlatform::PlaySound(const float StartTime) const {
 	}
 }
 
-void AAPlatform::MakeDamage(APlatformerCharacter* Character, const DamageTypes DamageType) const {
+void AAPlatform::MakeDamage(APlatformerCharacter* Character, const EDamageTypes DamageType) const {
 	if (!IsEnabled) {
 		return;
 	}
@@ -59,20 +59,20 @@ void AAPlatform::MakeDamage(APlatformerCharacter* Character, const DamageTypes D
 	}
 }
 
-int AAPlatform::GetDamage(APlatformerCharacter* Character, const DamageTypes DamageType) {
-	if (DamageType == DamageTypes::Normal) {
+int AAPlatform::GetDamage(APlatformerCharacter* Character, const EDamageTypes DamageType) {
+	if (DamageType == EDamageTypes::Normal) {
 		return FMath::RandRange(1, 10);
 	}
 
-	if (DamageType == DamageTypes::Trap) {
+	if (DamageType == EDamageTypes::Trap) {
 		return FMath::RandRange(11, 20);
 	}
 
-	if (DamageType == DamageTypes::Void) {
+	if (DamageType == EDamageTypes::Void) {
 		return Character->MyLocalPlayerSubsystem->GetHealth();
 	}
 
-	if (DamageType == DamageTypes::Poison) {
+	if (DamageType == EDamageTypes::Poison) {
 		Character->IsPoisoned = true;
 		Character->PoisonDurationInSeconds = FMath::RandRange(2, 5);
 
