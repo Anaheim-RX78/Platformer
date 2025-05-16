@@ -12,6 +12,7 @@
 #include "InputActionValue.h"
 #include "Kismet/GameplayStatics.h"
 
+class UMyGameInstanceSubsystem;
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
 APlatformerCharacter::APlatformerCharacter() {
@@ -95,21 +96,16 @@ void APlatformerCharacter::GetDamage(const int Damage) {
 	}
 }
 
-//////////////////////////////////////////////////////////////////////////
-// Input
-
 void APlatformerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) {
-	// Set up action bindings
 	if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent)) {
-		// Jumping
-		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &ACharacter::Jump);
-		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
+		EnhancedInputComponent->BindAction(this->JumpAction, ETriggerEvent::Started, this, &ACharacter::Jump);
+		EnhancedInputComponent->BindAction(this->JumpAction, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
 
-		// Moving
-		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &APlatformerCharacter::Move);
+		EnhancedInputComponent->BindAction(this->MoveAction, ETriggerEvent::Triggered, this,
+		                                   &APlatformerCharacter::Move);
 
-		// Looking
-		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &APlatformerCharacter::Look);
+		EnhancedInputComponent->BindAction(this->LookAction, ETriggerEvent::Triggered, this,
+		                                   &APlatformerCharacter::Look);
 	} else {
 		UE_LOG(LogTemplateCharacter, Error,
 		       TEXT(
@@ -129,7 +125,7 @@ void APlatformerCharacter::Move(const FInputActionValue& Value) {
 	const FVector2D MovementVector = Value.Get<FVector2D>();
 
 	if (this->Controller != nullptr) {
-		const FRotator Rotation = Controller->GetControlRotation();
+		const FRotator Rotation = this->Controller->GetControlRotation();
 		const FRotator YawRotation(0, Rotation.Yaw, 0);
 
 		const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
@@ -144,9 +140,9 @@ void APlatformerCharacter::Move(const FInputActionValue& Value) {
 void APlatformerCharacter::Look(const FInputActionValue& Value) {
 	const FVector2D LookAxisVector = Value.Get<FVector2D>();
 
-	if (Controller != nullptr) {
-		AddControllerYawInput(LookAxisVector.X);
-		AddControllerPitchInput(LookAxisVector.Y);
+	if (this->Controller != nullptr) {
+		this->AddControllerYawInput(LookAxisVector.X);
+		this->AddControllerPitchInput(LookAxisVector.Y);
 	}
 }
 
@@ -171,5 +167,5 @@ void APlatformerCharacter::ResetHealth() {
 void APlatformerCharacter::IncreaseJumpCount() {
 	this->JumpCount++;
 	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red,
-	                                 FString::Printf(TEXT("Jump count increased to %d"), JumpCount));
+	                                 FString::Printf(TEXT("Jump count increased to %d"), this->JumpCount));
 }
