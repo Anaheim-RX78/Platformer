@@ -4,8 +4,8 @@
 #include "ATrapPlatform.h"
 
 AATrapPlatform::AATrapPlatform() {
-	this->Trap = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Trap"));
-	this->Trap->SetupAttachment(Mesh);
+	this->Trap = CreateDefaultSubobject<UStaticMeshComponent>("Trap");
+	this->Trap->SetupAttachment(this->Mesh);
 	this->Trap->SetCollisionResponseToChannel(ECC_Visibility, ECR_Overlap);
 	this->Trap->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
 	this->Trap->SetVisibility(false);
@@ -17,7 +17,7 @@ void AATrapPlatform::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AA
 	Super::OnBeginOverlap(OverlappedComponent, OtherActor, OtherComp, OtherBodyIndex, bFromSweep, SweepResult);
 
 
-	if (!IsEnabled) {
+	if (!this->IsEnabled) {
 		return;
 	}
 

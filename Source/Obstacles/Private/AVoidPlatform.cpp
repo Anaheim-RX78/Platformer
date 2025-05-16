@@ -4,14 +4,14 @@
 #include "AVoidPlatform.h"
 
 AAVoidPlatform::AAVoidPlatform(): AAMovingPlatform() {
-	Mesh->SetCollisionResponseToChannel(ECC_Visibility, ECR_Overlap);
-	Mesh->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
+	this->Mesh->SetCollisionResponseToChannel(ECC_Visibility, ECR_Overlap);
+	this->Mesh->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
 }
 
 void AAVoidPlatform::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
                                     UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
                                     const FHitResult& SweepResult) {
-	if (!IsEnabled) {
+	if (!this->IsEnabled) {
 		return;
 	}
 

@@ -5,23 +5,19 @@
 #include "Components/BoxComponent.h"
 #include "Kismet/GameplayStatics.h"
 
-// Sets default values
 AAPlatform::AAPlatform() {
-	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	this->PrimaryActorTick.bCanEverTick = true;
 
-	Mesh = CreateDefaultSubobject<UStaticMeshComponent>("Mesh");
-	SetRootComponent(Mesh);
+	this->Mesh = this->CreateDefaultSubobject<UStaticMeshComponent>("Mesh");
+	this->SetRootComponent(Mesh);
 
-	// Create and set up the collision box
-	CollisionBox = CreateDefaultSubobject<UBoxComponent>(TEXT("CollisionBox"));
-	CollisionBox->SetupAttachment(Mesh);
-	CollisionBox->SetGenerateOverlapEvents(true);
-	CollisionBox->SetRelativeScale3D(FVector(0.8f, 0.8f, 2.f));
-	CollisionBox->OnComponentBeginOverlap.AddDynamic(this, &AAPlatform::OnBeginOverlap);
+	this->CollisionBox = this->CreateDefaultSubobject<UBoxComponent>("CollisionBox");
+	this->CollisionBox->SetupAttachment(Mesh);
+	this->CollisionBox->SetGenerateOverlapEvents(true);
+	this->CollisionBox->SetRelativeScale3D(FVector(0.8f, 0.8f, 2.f));
+	this->CollisionBox->OnComponentBeginOverlap.AddDynamic(this, &AAPlatform::OnBeginOverlap);
 }
 
-// Called when the game starts or when spawned
 void AAPlatform::BeginPlay() {
 	Super::BeginPlay();
 }
@@ -33,17 +29,17 @@ void AAPlatform::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor
 }
 
 void AAPlatform::PlaySound(const float StartTime) const {
-	if (DamageSoundEffect) {
-		UGameplayStatics::PlaySound2D(this, DamageSoundEffect, 1.0f, 1.0f, StartTime);
+	if (this->DamageSoundEffect) {
+		UGameplayStatics::PlaySound2D(this, this->DamageSoundEffect, 1.0f, 1.0f, StartTime);
 	}
 }
 
 void AAPlatform::MakeDamage(APlatformerCharacter* Character, const EDamageTypes DamageType) const {
-	if (!IsEnabled) {
+	if (!this->IsEnabled) {
 		return;
 	}
 
-	const int Damage = GetDamage(Character, DamageType);
+	const int Damage = this->GetDamage(Character, DamageType);
 
 	if (Character->MyLocalPlayerSubsystem->GetHealth() == 0) {
 		return;

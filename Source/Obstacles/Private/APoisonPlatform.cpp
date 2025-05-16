@@ -8,7 +8,7 @@ void AAPoisonPlatform::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, 
                                       const FHitResult& SweepResult) {
 	Super::OnBeginOverlap(OverlappedComponent, OtherActor, OtherComp, OtherBodyIndex, bFromSweep, SweepResult);
 
-	if (!IsEnabled) {
+	if (!this->IsEnabled) {
 		return;
 	}
 
