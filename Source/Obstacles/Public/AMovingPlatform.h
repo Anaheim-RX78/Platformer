@@ -42,6 +42,10 @@ public:
 	 *                  movement calculations are frame-rate independent.
 	 */
 	virtual void Tick(float DeltaTime) override;
+	void MovePlatform(float DeltaTime);
+
+	UFUNCTION(Server, Reliable)
+	void ServerMovePlatform(float DeltaTime);
 
 protected:
 	/**
