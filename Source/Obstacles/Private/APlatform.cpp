@@ -24,12 +24,7 @@ void AAPlatform::BeginPlay() {
 
 void AAPlatform::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
                                 UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
-                                const FHitResult& SweepResult) {
-	APlatformerCharacter* Character = static_cast<APlatformerCharacter*>(OtherActor);
-	if (IsValid(Character)) {
-		UE_LOG(LogTemp, Warning, TEXT("Invalid collision method! Use the correct class!"));
-	}
-}
+                                const FHitResult& SweepResult) {}
 
 void AAPlatform::PlaySound(const float StartTime) const {
 	if (this->DamageSoundEffect) {
